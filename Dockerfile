@@ -1,31 +1,31 @@
-# 🔹 Folosim OpenJDK 21 pentru a construi aplicația
+# Folosim OpenJDK 21 pentru a construi aplicatia
 FROM openjdk:21-jdk-slim
 
-# 🔹 Setăm directorul de lucru
+# Setam directorul de lucru
 WORKDIR /app
 
-# 🔹 Copiem și descărcăm dependențele Maven (pentru caching)
+# Copiem si descarcam dependentele Maven
 COPY pom.xml mvnw ./
 COPY .mvn .mvn
 RUN chmod +x mvnw && ./mvnw dependency:go-offline
 
-# 🔹 Copiem codul sursă în container
+# Copiem codul sursa în container
 COPY src ./src
 
-# 🔹 Construim fișierul `.war`
+# Construim fisierul `.war`
 RUN ./mvnw clean package -DskipTests
 
-# 🔹 Creăm un utilizator non-root pentru securitate
+# Cream un utilizator non-root pentru securitate
 RUN useradd -m springuser
 
-# 🔹 Setăm directorul de lucru
+# Setam directorul de lucru
 WORKDIR /app
 
-# 🔹 Setăm proprietarul fișierelor la utilizatorul non-root
+# Setam proprietarul fisierelor la utilizatorul non-root
 USER springuser
 
-# 🔹 Expunem portul pe care va rula aplicația
+# Expunem portul pe care va rula aplicatia
 EXPOSE 8081
 
-# 🔹 Definim punctul de intrare
+# Definim punctul de intrare
 CMD ["java", "-jar", "target/secure-owasp-be-0.0.1-SNAPSHOT.war"]
