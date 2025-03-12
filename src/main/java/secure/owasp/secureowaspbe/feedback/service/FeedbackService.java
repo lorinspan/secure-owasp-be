@@ -1,7 +1,8 @@
 package secure.owasp.secureowaspbe.feedback.service;
 
 import lombok.RequiredArgsConstructor;
-import org.owasp.encoder.Encode;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -11,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import secure.owasp.secureowaspbe.feedback.model.Feedback;
 import secure.owasp.secureowaspbe.feedback.repository.FeedbackRepository;
-import secure.owasp.secureowaspbe.util.OwaspUtils;
 
 import java.util.List;
 
@@ -37,11 +37,7 @@ public class FeedbackService {
             throw new IllegalArgumentException("Feedback message cannot be empty.");
         }
 
-        if (message.matches(OwaspUtils.MESSAGE_REGEX)) {
-            throw new IllegalArgumentException("Invalid characters in feedback.");
-        }
-
-        String sanitizedMessage = Encode.forHtml(message);
+        String sanitizedMessage = Jsoup.clean(message, Safelist.none());
 
         Feedback feedback = new Feedback();
         feedback.setUsername(username);

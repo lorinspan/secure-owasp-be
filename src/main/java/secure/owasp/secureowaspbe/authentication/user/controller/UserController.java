@@ -7,12 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import secure.owasp.secureowaspbe.authentication.user.model.User;
 import secure.owasp.secureowaspbe.authentication.user.model.UserDto;
 import secure.owasp.secureowaspbe.authentication.user.service.UserService;
@@ -71,6 +66,22 @@ public class UserController {
             User updatedUser = userService.updateUserByAdmin(id, updates);
             return ResponseEntity.ok(updatedUser);
         } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')") // Ensure only admins can delete users
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String adminUsername = auth.getName();
+
+        try {
+            userService.deleteUser(id, adminUsername);
+            logger.info("Admin [{}] successfully deleted user with ID [{}]", adminUsername, id);
+            return ResponseEntity.ok("User deleted successfully.");
+        } catch (IllegalArgumentException e) {
+            logger.warn("Admin [{}] attempted to delete user [{}] but failed: {}", adminUsername, id, e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

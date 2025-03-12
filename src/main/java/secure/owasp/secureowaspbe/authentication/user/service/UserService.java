@@ -157,6 +157,22 @@ public class UserService {
         return updatedUser;
     }
 
+    public void deleteUser(Long userId, String adminUsername) {
+        User adminUser = userRepository.findByUsername(adminUsername)
+                .orElseThrow(() -> new IllegalArgumentException("Authenticated admin user not found"));
 
+        User userToDelete = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        if (userToDelete.getId().equals(adminUser.getId())) {
+            logger.warn("Admin [{}] attempted to delete their own account, which is not allowed!", adminUsername);
+            throw new IllegalArgumentException("You cannot delete your own account!");
+        }
+
+        logger.info("Admin [{}] is deleting user [{}] (ID: {})", adminUsername, userToDelete.getUsername(), userToDelete.getId());
+
+        userRepository.delete(userToDelete);
+
+        logger.info("User [{}] (ID: {}) has been deleted by admin [{}]", userToDelete.getUsername(), userToDelete.getId(), adminUsername);
+    }
 }

@@ -81,10 +81,11 @@
             <version>0.12.3</version>
         </dependency>
         <dependency>
-            <groupId>org.owasp.encoder</groupId>
-            <artifactId>encoder</artifactId>
-            <version>1.2.3</version>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.15.3</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.mockito</groupId>
