@@ -105,7 +105,7 @@ public class UserControllerTest {
     @Test
     void updateUserByAdmin_Success() {
         Map<String, String> updates = Map.of("role", "ADMIN");
-        User mockUser = new User();
+        UserDto mockUser = new UserDto(new User());
         mockUser.setUsername("updatedUser");
 
         when(userService.updateUserByAdmin(1L, updates)).thenReturn(mockUser);

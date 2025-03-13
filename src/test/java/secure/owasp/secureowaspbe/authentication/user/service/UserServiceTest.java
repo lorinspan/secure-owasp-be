@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import secure.owasp.secureowaspbe.authentication.user.model.User;
+import secure.owasp.secureowaspbe.authentication.user.model.UserDto;
 import secure.owasp.secureowaspbe.authentication.user.repository.UserRepository;
 import secure.owasp.secureowaspbe.security.jwt.JwtUtil;
 
@@ -86,7 +87,7 @@ public class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(mockUser);
 
         Map<String, String> updates = Map.of("role", "ADMIN");
-        User updatedUser = userService.updateUserByAdmin(1L, updates);
+        UserDto updatedUser = userService.updateUserByAdmin(1L, updates);
 
         assertEquals("testUser", updatedUser.getUsername());
     }

@@ -37,7 +37,7 @@ public class StoreCheckerService {
         String stockInfo = getAllowedStockData(storeUrl);
 
         if (stockInfo != null) {
-            logger.info("✅ User [{}] checked stock for [{}]: {}", username, storeUrl, stockInfo);
+            logger.info("User [{}] checked stock for [{}]: {}", username, storeUrl, stockInfo);
             return Map.of("message", stockInfo);
         }
 

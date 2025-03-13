@@ -15,4 +15,13 @@ public class UserDto {
     private String role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public UserDto(User user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+        this.role = user.getRole();
+        this.createdAt = user.getCreatedAt();
+        this.updatedAt = user.getUpdatedAt();
+    }
 }

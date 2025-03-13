@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import secure.owasp.secureowaspbe.authentication.user.repository.UserRepository;
 import secure.owasp.secureowaspbe.feedback.model.Feedback;
 import secure.owasp.secureowaspbe.feedback.repository.FeedbackRepository;
 
@@ -20,6 +21,9 @@ public class FeedbackServiceTest {
 
     @Mock
     private FeedbackRepository feedbackRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {

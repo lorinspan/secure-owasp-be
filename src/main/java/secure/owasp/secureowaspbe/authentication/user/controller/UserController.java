@@ -63,7 +63,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUserByAdmin(@PathVariable Long id, @RequestBody Map<String, String> updates) {
         try {
-            User updatedUser = userService.updateUserByAdmin(id, updates);
+            UserDto updatedUser = userService.updateUserByAdmin(id, updates);
             return ResponseEntity.ok(updatedUser);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

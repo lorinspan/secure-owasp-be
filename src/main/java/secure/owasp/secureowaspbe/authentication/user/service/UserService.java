@@ -51,45 +51,69 @@ public class UserService {
         logger.info("User [{}] (ID: {}) is updating their profile", user.getUsername(), user.getId());
 
         boolean usernameChanged = false;
+        boolean userUpdated = false;
 
         if (updates.containsKey("email")) {
             String newEmail = updates.get("email");
-            if (userRepository.existsByEmail(newEmail)) {
-                logger.warn("User [{}] (ID: {}) tried to update to an already used email: {}", user.getUsername(), user.getId(), newEmail);
-                throw new IllegalArgumentException("Email already taken!");
+            if (!newEmail.equals(user.getEmail())) {
+                if (userRepository.existsByEmail(newEmail)) {
+                    logger.warn("User [{}] (ID: {}) tried to update to an already used email: {}", user.getUsername(), user.getId(), newEmail);
+                    throw new IllegalArgumentException("Email already taken!");
+                }
+                user.setEmail(newEmail);
+                userUpdated = true;
+                logger.info("User [{}] updated email to: {}", user.getUsername(), newEmail);
             }
-            user.setEmail(newEmail);
-            logger.info("User [{}] updated email to: {}", user.getUsername(), newEmail);
         }
 
         if (updates.containsKey("username")) {
             String newUsername = updates.get("username");
-            if (userRepository.existsByUsername(newUsername)) {
-                logger.warn("User [{}] (ID: {}) tried to change to an already used username: {}", user.getUsername(), user.getId(), newUsername);
-                throw new IllegalArgumentException("Username already taken!");
+            if (!newUsername.equals(user.getUsername())) {
+                if (userRepository.existsByUsername(newUsername)) {
+                    logger.warn("User [{}] (ID: {}) tried to change to an already used username: {}", user.getUsername(), user.getId(), newUsername);
+                    throw new IllegalArgumentException("Username already taken!");
+                }
+                user.setUsername(newUsername);
+                usernameChanged = true;
+                userUpdated = true;
+                logger.info("User [{}] changed username to: {}", oldUsername, newUsername);
             }
-            user.setUsername(newUsername);
-            usernameChanged = true;
-            logger.info("User [{}] changed username to: {}", oldUsername, newUsername);
         }
 
         if (updates.containsKey("password")) {
-            user.setPassword(passwordEncoder.encode(updates.get("password")));
-            logger.info("User [{}] updated password", user.getUsername());
+            String newPassword = updates.get("password");
+            if (!newPassword.isEmpty()) {
+                user.setPassword(passwordEncoder.encode(newPassword));
+                userUpdated = true;
+                logger.info("User [{}] updated password", user.getUsername());
+            }
         }
 
-        User updatedUser = userRepository.save(user);
+        if (userUpdated) {
+            User updatedUser = userRepository.save(user);
+            UserDto userDto = new UserDto(
+                    updatedUser.getId(),
+                    updatedUser.getUsername(),
+                    updatedUser.getEmail(),
+                    updatedUser.getRole(),
+                    updatedUser.getCreatedAt(),
+                    updatedUser.getUpdatedAt()
+            );
 
-        // Daca username-ul s-a schimbat, generam un nou token si il returnam impreuna cu user-ul, deoarece login-ul se face cu username-ul
-        if (usernameChanged) {
-            String newToken = jwtUtil.generateToken(updatedUser.getUsername(), updatedUser.getRole());
-            return Map.of("user", updatedUser, "token", newToken);
+            // If username changed, generate a new JWT token
+            if (usernameChanged) {
+                String newToken = jwtUtil.generateToken(updatedUser.getUsername(), updatedUser.getRole());
+                return Map.of("user", userDto, "token", newToken);
+            }
+
+            return Map.of("user", userDto);
         }
 
-        return Map.of("user", updatedUser);
+        return Map.of("message", "No changes detected");
     }
 
-    public User updateUserByAdmin(Long id, Map<String, String> updates) {
+
+    public UserDto updateUserByAdmin(Long id, Map<String, String> updates) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String adminUsername = auth.getName();
 
@@ -154,7 +178,14 @@ public class UserService {
         User updatedUser = userRepository.save(user);
         logger.info("Admin [{}] successfully updated user [{}] (ID: {})", adminUsername, updatedUser.getUsername(), updatedUser.getId());
 
-        return updatedUser;
+        return new UserDto(
+                updatedUser.getId(),
+                updatedUser.getUsername(),
+                updatedUser.getEmail(),
+                updatedUser.getRole(),
+                updatedUser.getCreatedAt(),
+                updatedUser.getUpdatedAt()
+        );
     }
 
     public void deleteUser(Long userId, String adminUsername) {
