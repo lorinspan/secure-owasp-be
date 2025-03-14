@@ -1,0 +1,13 @@
+secure\owasp\secureowaspbe\recipefinder\controller\RecipeFinderControllerTest.class
+secure\owasp\secureowaspbe\feedback\service\FeedbackServiceTest.class
+secure\owasp\secureowaspbe\authentication\admin\controller\AdminControllerTest.class
+secure\owasp\secureowaspbe\feedback\controller\FeedbackControllerTest.class
+secure\owasp\secureowaspbe\storechecker\service\StoreCheckerServiceTest.class
+secure\owasp\secureowaspbe\authentication\controller\AuthControllerTest.class
+secure\owasp\secureowaspbe\authentication\user\controller\UserControllerTest.class
+secure\owasp\secureowaspbe\security\service\UserDServiceTest.class
+secure\owasp\secureowaspbe\storechecker\controller\StoreCheckerControllerTest.class
+secure\owasp\secureowaspbe\authentication\admin\service\AdminServiceTest.class
+secure\owasp\secureowaspbe\authentication\service\AuthServiceTest.class
+secure\owasp\secureowaspbe\authentication\user\service\UserServiceTest.class
+secure\owasp\secureowaspbe\recipefinder\service\RecipeFinderServiceTest.class
